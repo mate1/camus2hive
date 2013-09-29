@@ -1,0 +1,11 @@
+CREATE EXTERNAL TABLE ${TABLE_NAME}
+PARTITIONED BY (year int, month int, day int, hour int)
+ROW FORMAT SERDE
+  'org.apache.hadoop.hive.serde2.avro.AvroSerDe'
+STORED AS INPUTFORMAT
+  'org.apache.hadoop.hive.ql.io.avro.AvroContainerInputFormat'
+OUTPUTFORMAT
+  'org.apache.hadoop.hive.ql.io.avro.AvroContainerOutputFormat'
+TBLPROPERTIES (
+  'avro.schema.url'='hdfs://${HDFS_NAMENODE}${HDFS_PATH_FOR_SCHEMAS}/${FILE_NAME}'
+);

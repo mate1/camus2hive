@@ -197,8 +197,6 @@ ${HIVE} -e "SHOW PARTITIONS $topic" 1> $EXISTING_HIVE_PARTITIONS_WITH_SLASHES 2>
             if hive_success_check "Some errors occurred while creating the table '$topic'"; then
                 echo "Successfully created Hive table '$topic' from schema $SCHEMA_ID :D !"
             fi
-        else
-            continue
         fi
     else
         if [[ ! -z "$AVRO_SCHEMA_REPOSITORY" ]]; then
@@ -213,8 +211,6 @@ ${HIVE} -e "SHOW PARTITIONS $topic" 1> $EXISTING_HIVE_PARTITIONS_WITH_SLASHES 2>
             if hive_success_check "Some errors occurred while updating schema for the table '$topic'"; then
                 echo "Successfully updated Hive table '$topic' to schema $SCHEMA_ID :D !"
             fi
-        else
-            continue
         fi
     fi
 

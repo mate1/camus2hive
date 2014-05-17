@@ -128,7 +128,7 @@ function hive_success_check {
 function latest_schema_for_topic {
     local uri="$AVRO_SCHEMA_REPOSITORY/$1/latest"
     # This gets returned in the format ID\tSCHEMA
-    local latest=$(curl -s ${uri})
+    local latest=$(curl -fs ${uri})
     if [[ -z $latest ]]; then
         # We need to crap out here because if this fails, we could lose data
         echo "Could not access avro repository at $uri"

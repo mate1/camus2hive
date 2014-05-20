@@ -85,7 +85,7 @@ fi
 HIVE="hive --database $DATABASE -S"
 
 # What namenode Hive is communicating with for this database
-NAME_NODE_URI=$(${HIVE} -e "describe database $DATABASE;" | sed -re 's%.*\t(hdfs://[a-zA-Z0-9]+)(:[0-9]+)?.*%\1\2%')
+NAME_NODE_URI=$(${HIVE} -e "describe database $DATABASE;" | grep -v '^\[' | sed -re 's%.*\t(hdfs://[a-zA-Z0-9\-]+)(:[0-9]+)?.*%\1\2%')
 
 # Behavior config
 REQUERY_HADOOP_DIRS=true
@@ -175,7 +175,7 @@ while read topic; do
     fi
 
 	# Check if the table already exists in Hive
-${HIVE} -e "SHOW PARTITIONS $topic" 1> $EXISTING_HIVE_PARTITIONS_WITH_SLASHES 2> $HIVE_STDERR
+${HIVE} -e "SHOW PARTITIONS $topic" | grep -v '^\[' 1> $EXISTING_HIVE_PARTITIONS_WITH_SLASHES 2> $HIVE_STDERR
 
     if ! hive_success_check "Table '$topic' does not currently exist in Hive (or Hive returned some other error on SHOW PARTITIONS $topic)."; then
         if [[ ! -z "$AVRO_SCHEMA_REPOSITORY" ]]; then
@@ -214,7 +214,7 @@ ${HIVE} -e "SHOW PARTITIONS $topic" 1> $EXISTING_HIVE_PARTITIONS_WITH_SLASHES 2>
         fi
     fi
 
-    cat $EXISTING_HIVE_PARTITIONS_WITH_SLASHES | sed 's%/%, %g' > $EXISTING_HIVE_PARTITIONS
+    cat $EXISTING_HIVE_PARTITIONS_WITH_SLASHES | grep -v '^\[' | sed 's%/%, %g' > $EXISTING_HIVE_PARTITIONS
 
     # Extract all partitions currently ingested by Camus
     hdfs dfs -ls -R $CAMUS_DESTINATION_DIR/$topic | sed "s%.*$CAMUS_DESTINATION_DIR/$topic/hourly/\([0-9]*\)/\([0-9]*\)/\([0-9]*\)/\([0-9]*\)/.*%year=\1, month=\2, day=\3, hour=\4%" | grep "year.*" | sort | uniq > $EXISTING_CAMUS_PARTITIONS
